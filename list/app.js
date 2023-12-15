@@ -37,7 +37,15 @@ app.post("/list", async function (req, res) {
     res.status(500).json({ error: err.message });
   }
 });
-
+app.get("/list", async function(req, res) {
+  try {
+    var elements = await List.find();
+    res.json({elements:elements});
+    } catch(err) {
+      console.error(err);
+      res.status(500).send(err);
+    }
+});
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

@@ -21,10 +21,9 @@ const GlobalApp = {
   methods : {
     add() {
       var text = "Element " + (this.elements.length + 1);
-      axios.post("/list", {text:text})     // pass object 
-                                           // {text:text} to 
-                                           // server
+      axios.post("/list", {text:text})
       .then((response) => {
+        console.log(this.elements);
         this.elements.push({text:text, 
         _id:response.data.id});
       });
@@ -38,6 +37,9 @@ const GlobalApp = {
         if (element._id == id) return false;
         else return true;
       });
+      axios.delete("/list", { data : {id:id} });    
+      // the options must be written in the data 
+      // property
     },
     modify(params) {
       var id = params.id;
@@ -51,7 +53,20 @@ const GlobalApp = {
         }
         else return element;
       });
+            // modify the text of the element having this 
+      // identifier
+      axios.put("/list", {text:value, id:id});
+    },
+  },
+  async created() {
+    try {
+      const response = await axios.get("/list");
+      this.elements = response.data.elements.map(function (element) {
+        return { _id: element._id, text: element.text };
+      });
+    } catch (err) {
+      console.error(err);
     }
-  }
+  },
 }
 export default GlobalApp;
